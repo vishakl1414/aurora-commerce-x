@@ -1,0 +1,45 @@
+Phase 1 – Solid Monolith (2 Months)
+
+Single Spring Boot project:
+
+User + Auth
+
+Product
+
+Order
+
+Payment (Stripe integration basic)
+
+Proper layered architecture
+
+JWT Security
+
+Exception handling
+
+Logging
+
+Validation
+
+Single database.
+
+Ye hi 70% real backend skill hai.
+
+
+Phase 2 – Refactor to Microservices
+
+Service boundary kya hoti hai
+
+DB separation ka pain kya hota hai
+
+API Gateway kyun lagate hain
+
+
+Phase 3 – DevOps
+
+Dockerize
+
+CI/CD
+
+AWS deploy
+
+Monitoring

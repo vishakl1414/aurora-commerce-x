@@ -1,0 +1,19 @@
+notepad .gitignore
+```
+
+Notepad khulega — yeh content paste karo:
+```
+# Gradle
+.gradle/
+build/
+
+# IntelliJ
+.idea/
+*.iml
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
