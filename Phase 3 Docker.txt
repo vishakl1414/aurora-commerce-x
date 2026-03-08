@@ -1,0 +1,127 @@
+Day 39 — Docker Q&A with Answers 📝
+
+Q1. Docker Compose kya hota hai aur kyun use karte hain?
+Docker Compose ek tool hai jo 
+multiple containers ek saath 
+manage karta hai!
+
+Pehle:
+5 alag terminals mein 
+5 alag commands run karni padti thi
+
+Docker Compose ke baad:
+Sirf ek command:
+docker-compose up
+
+Sab kuch automatically start! ✅
+
+Q2. Dockerfile mein kya likha tha aur kya matlab hai?
+FROM eclipse-temurin:17-jdk-alpine
+→ Java 17 base image use karo
+
+WORKDIR /app
+→ Container mein /app folder mein jao
+
+COPY build/libs/*.jar app.jar
+→ JAR file copy karo container mein
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
+→ JAR file run karo
+
+Q3. Maven aur Gradle ke Dockerfile mein kya fark tha?
+Maven (Eureka Server):
+COPY target/*.jar app.jar
+
+Gradle (Baaki sab):
+COPY build/libs/*.jar app.jar
+
+Maven JAR → target/ folder mein
+Gradle JAR → build/libs/ folder mein
+
+Q4. docker-compose.yml mein depends_on ka kya kaam hai?
+depends_on batata hai ki —
+"Pehle yeh service start honi chahiye"
+
+Example:
+user-service:
+  depends_on:
+    - mysql        ← pehle mysql ready ho
+    - eureka-server ← pehle eureka ready ho
+
+Taaki User Service start hote waqt
+MySQL aur Eureka already ready hon! ✅
+
+Q5. healthcheck kyun add kiya MySQL mein?
+MySQL container start hone mein 
+time lagta hai!
+
+Bina healthcheck ke:
+Services start hoti hain lekin 
+MySQL ready nahi hota → Error!
+
+Healthcheck ke saath:
+MySQL ready hone ke baad hi
+doosri services start hoti hain! ✅
+
+Q6. aurora-network kyun banaya?
+Saari services ek hi network pe honi 
+chahiye taaki ek doosre se 
+communicate kar sakein!
+
+Bina network ke:
+Services alag alag hoti hain —
+ek doosre ko nahi dekh sakti! ❌
+
+Network ke saath:
+user-service → mysql ko 
+"mysql" naam se access kar sakti hai! ✅
+
+Q7. volumes ka kya kaam hai?
+mysql-data:/var/lib/mysql
+
+Agar MySQL container restart ho jaye —
+Data safe rahega! ✅
+
+Bina volume ke:
+Container restart → sab data delete! ❌
+
+Volume ke saath:
+Container restart → data safe! ✅
+
+Q8. docker-compose down aur docker-compose up mein kya fark hai?
+docker-compose up
+→ Saare containers start karo
+
+docker-compose down
+→ Saare containers band karo
+→ Network delete karo
+
+docker-compose restart
+→ Sirf restart karo — data safe! ✅
+
+Q9. JAR file build karne se pehle kyun banana zaroori tha?
+Dockerfile mein likha tha:
+COPY build/libs/*.jar app.jar
+
+Agar JAR file nahi hogi —
+Docker copy nahi kar payega
+aur image build fail ho jayegi! ❌
+
+Isliye pehle:
+.\gradlew.bat build -x test
+
+Phir:
+docker-compose up --build ✅
+
+Q10. docker ps command kya karta hai?
+Saare running containers 
+dikhata hai!
+
+Output mein dikh ta hai:
+- Container ID
+- Image name
+- Port mapping
+- Container name
+- Status (Up/Down)
+
+docker ps ✅
