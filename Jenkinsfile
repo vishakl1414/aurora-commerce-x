@@ -58,72 +58,28 @@
         stage('Build Docker Images') {
             steps {
                 echo 'Building Docker images...'
-                sh """
-                    docker build -t ${REGISTRY}/eureka-server:${IMAGE_TAG}   ./eureka-server
-                    docker build -t ${REGISTRY}/user-service:${IMAGE_TAG}    ./user-service
-                    docker build -t ${REGISTRY}/product-service:${IMAGE_TAG} ./product-service
-                    docker build -t ${REGISTRY}/api-gateway:${IMAGE_TAG}     ./api-gateway/api-gateway
-                    docker build -t ${REGISTRY}/order-service:${IMAGE_TAG}   ./order-service/order-service
-                """
+                sh 'docker build -t vishakl1474/eureka-server:${BUILD_NUMBER} ./eureka-server'
+                sh 'docker build -t vishakl1474/user-service:${BUILD_NUMBER} ./user-service'
+                sh 'docker build -t vishakl1474/product-service:${BUILD_NUMBER} ./product-service'
+                sh 'docker build -t vishakl1474/api-gateway:${BUILD_NUMBER} ./api-gateway/api-gateway'
+                sh 'docker build -t vishakl1474/order-service:${BUILD_NUMBER} ./order-service/order-service'
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
                 echo 'Pushing images to Docker Hub...'
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-credentials',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    sh """
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker push ${REGISTRY}/eureka-server:${IMAGE_TAG}
-                        docker push ${REGISTRY}/user-service:${IMAGE_TAG}
-                        docker push ${REGISTRY}/product-service:${IMAGE_TAG}
-                        docker push ${REGISTRY}/api-gateway:${IMAGE_TAG}
-                        docker push ${REGISTRY}/order-service:${IMAGE_TAG}
-                        docker logout
-                    """
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    sh 'docker push vishakl1474/eureka-server:${BUILD_NUMBER}'
+                    sh 'docker push vishakl1474/user-service:${BUILD_NUMBER}'
+                    sh 'docker push vishakl1474/product-service:${BUILD_NUMBER}'
+                    sh 'docker push vishakl1474/api-gateway:${BUILD_NUMBER}'
+                    sh 'docker push vishakl1474/order-service:${BUILD_NUMBER}'
+                    sh 'docker logout'
                 }
-            }
-        }
-
-        stage('Deploy to Kubernetes') {
-            steps {
-                echo 'Deploying to Kubernetes...'
-                sh """
-                    kubectl set image deployment/eureka-server   eureka-server=${REGISTRY}/eureka-server:${IMAGE_TAG}
-                    kubectl set image deployment/user-service    user-service=${REGISTRY}/user-service:${IMAGE_TAG}
-                    kubectl set image deployment/product-service product-service=${REGISTRY}/product-service:${IMAGE_TAG}
-                    kubectl set image deployment/api-gateway     api-gateway=${REGISTRY}/api-gateway:${IMAGE_TAG}
-                    kubectl set image deployment/order-service   order-service=${REGISTRY}/order-service:${IMAGE_TAG}
-                """
-            }
-        }
-
-        stage('Verify Deployment') {
-            steps {
-                echo 'Verifying rollout...'
-                sh """
-                    kubectl rollout status deployment/user-service    --timeout=120s
-                    kubectl rollout status deployment/product-service --timeout=120s
-                    kubectl rollout status deployment/order-service   --timeout=120s
-                    kubectl rollout status deployment/api-gateway     --timeout=120s
-                """
             }
         }
     }
 
     post {
-        success {
-            echo 'Pipeline SUCCESS - All services deployed!'
-        }
-        failure {
-            echo 'Pipeline FAILED - Check logs above.'
-        }
-        always {
-            sh 'docker image prune -f'
-        }
-    }
-}
