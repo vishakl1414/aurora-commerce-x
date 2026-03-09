@@ -7,7 +7,6 @@
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 echo 'Cloning repository...'
@@ -58,24 +57,24 @@
         stage('Build Docker Images') {
             steps {
                 echo 'Building Docker images...'
-                sh 'docker build -t vishakl1474/eureka-server:${BUILD_NUMBER} ./eureka-server'
-                sh 'docker build -t vishakl1474/user-service:${BUILD_NUMBER} ./user-service'
-                sh 'docker build -t vishakl1474/product-service:${BUILD_NUMBER} ./product-service'
-                sh 'docker build -t vishakl1474/api-gateway:${BUILD_NUMBER} ./api-gateway/api-gateway'
-                sh 'docker build -t vishakl1474/order-service:${BUILD_NUMBER} ./order-service/order-service'
+                sh 'docker build -t vishakl1474/eureka-server:latest ./eureka-server'
+                sh 'docker build -t vishakl1474/user-service:latest ./user-service'
+                sh 'docker build -t vishakl1474/product-service:latest ./product-service'
+                sh 'docker build -t vishakl1474/api-gateway:latest ./api-gateway/api-gateway'
+                sh 'docker build -t vishakl1474/order-service:latest ./order-service/order-service'
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
-                echo 'Pushing images to Docker Hub...'
+                echo 'Pushing to Docker Hub...'
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                    sh 'docker push vishakl1474/eureka-server:${BUILD_NUMBER}'
-                    sh 'docker push vishakl1474/user-service:${BUILD_NUMBER}'
-                    sh 'docker push vishakl1474/product-service:${BUILD_NUMBER}'
-                    sh 'docker push vishakl1474/api-gateway:${BUILD_NUMBER}'
-                    sh 'docker push vishakl1474/order-service:${BUILD_NUMBER}'
+                    sh 'docker push vishakl1474/eureka-server:latest'
+                    sh 'docker push vishakl1474/user-service:latest'
+                    sh 'docker push vishakl1474/product-service:latest'
+                    sh 'docker push vishakl1474/api-gateway:latest'
+                    sh 'docker push vishakl1474/order-service:latest'
                     sh 'docker logout'
                 }
             }
@@ -83,3 +82,11 @@
     }
 
     post {
+        success {
+            echo 'Pipeline SUCCESS!'
+        }
+        failure {
+            echo 'Pipeline FAILED!'
+        }
+    }
+}
