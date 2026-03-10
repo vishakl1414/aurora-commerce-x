@@ -1,11 +1,9 @@
 pipeline {
     agent any
-
     environment {
         REGISTRY = "vishakl1474"
         IMAGE_TAG = "${BUILD_NUMBER}"
     }
-
     stages {
         stage('Checkout') {
             steps {
@@ -13,19 +11,20 @@ pipeline {
                 checkout scm
             }
         }
-
         stage('Build All Services') {
             parallel {
                 stage('Build Eureka Server') {
                     steps {
                         dir('eureka-server') {
-                            sh './gradlew clean build -x test'
+                            sh 'chmod +x mvnw'
+                            sh './mvnw clean package -DskipTests'
                         }
                     }
                 }
                 stage('Build User Service') {
                     steps {
                         dir('user-service') {
+                            sh 'chmod +x gradlew'
                             sh './gradlew clean build -x test'
                         }
                     }
@@ -33,6 +32,7 @@ pipeline {
                 stage('Build Product Service') {
                     steps {
                         dir('product-service') {
+                            sh 'chmod +x gradlew'
                             sh './gradlew clean build -x test'
                         }
                     }
@@ -40,6 +40,7 @@ pipeline {
                 stage('Build API Gateway') {
                     steps {
                         dir('api-gateway/api-gateway') {
+                            sh 'chmod +x gradlew'
                             sh './gradlew clean build -x test'
                         }
                     }
@@ -47,13 +48,13 @@ pipeline {
                 stage('Build Order Service') {
                     steps {
                         dir('order-service/order-service') {
+                            sh 'chmod +x gradlew'
                             sh './gradlew clean build -x test'
                         }
                     }
                 }
             }
         }
-
         stage('Build Docker Images') {
             steps {
                 echo 'Building Docker images...'
@@ -64,7 +65,6 @@ pipeline {
                 sh 'docker build -t vishakl1474/order-service:latest ./order-service/order-service'
             }
         }
-
         stage('Push to Docker Hub') {
             steps {
                 echo 'Pushing to Docker Hub...'
@@ -80,7 +80,6 @@ pipeline {
             }
         }
     }
-
     post {
         success {
             echo 'Pipeline SUCCESS!'
