@@ -1,9 +1,11 @@
 pipeline {
     agent any
     environment {
-        REGISTRY = "vishakl1474"
-        IMAGE_TAG = "${BUILD_NUMBER}"
-    }
+    REGISTRY = "vishakl1474"
+    IMAGE_TAG = "${BUILD_NUMBER}"
+    JAVA_HOME = "/usr/lib/jvm/java-21-openjdk-amd64"
+    PATH = "/usr/lib/jvm/java-21-openjdk-amd64/bin:${PATH}"
+}
     stages {
         stage('Checkout') {
             steps {
