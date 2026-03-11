@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-    REGISTRY = "vishakl1474"
+    REGISTRY = "vish1414"
     IMAGE_TAG = "${BUILD_NUMBER}"
     JAVA_HOME = "/usr/lib/jvm/java-21-openjdk-amd64"
     PATH = "/usr/lib/jvm/java-21-openjdk-amd64/bin:${PATH}"
@@ -60,11 +60,11 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 echo 'Building Docker images...'
-                sh 'docker build -t vishakl1474/eureka-server:latest ./eureka-server'
-                sh 'docker build -t vishakl1474/user-service:latest ./user-service'
-                sh 'docker build -t vishakl1474/product-service:latest ./product-service'
-                sh 'docker build -t vishakl1474/api-gateway:latest ./api-gateway/api-gateway'
-                sh 'docker build -t vishakl1474/order-service:latest ./order-service/order-service'
+                sh 'docker build -t vish1414/eureka-server:latest ./eureka-server'
+                sh 'docker build -t vish1414/user-service:latest ./user-service'
+                sh 'docker build -t vish1414/product-service:latest ./product-service'
+                sh 'docker build -t vish1414/api-gateway:latest ./api-gateway/api-gateway'
+                sh 'docker build -t vish1414/order-service:latest ./order-service/order-service'
             }
         }
         stage('Push to Docker Hub') {
@@ -72,11 +72,11 @@ pipeline {
                 echo 'Pushing to Docker Hub...'
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                    sh 'docker push vishakl1474/eureka-server:latest'
-                    sh 'docker push vishakl1474/user-service:latest'
-                    sh 'docker push vishakl1474/product-service:latest'
-                    sh 'docker push vishakl1474/api-gateway:latest'
-                    sh 'docker push vishakl1474/order-service:latest'
+                    sh 'docker push vish1414/eureka-server:latest'
+                    sh 'docker push vish1414/user-service:latest'
+                    sh 'docker push vish1414/product-service:latest'
+                    sh 'docker push vish1414/api-gateway:latest'
+                    sh 'docker push vish1414/order-service:latest'
                     sh 'docker logout'
                 }
             }
